@@ -9,7 +9,6 @@ export default function CodeView({ project, onClose }) {
 
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
     const onKey = (e) => { if (e.key === 'Escape') handleClose() }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -21,11 +20,10 @@ export default function CodeView({ project, onClose }) {
   }
 
   return (
-    <section
-      className="w-full flex flex-col items-center"
-      style={{ minHeight: 'calc(100vh - 64px)', paddingTop: '96px', opacity: visible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+    <div
+      className="w-full flex flex-col border border-white/8 rounded-2xl overflow-hidden bg-[#0d0d0d]"
+      style={{ height: '70vh', opacity: visible ? 1 : 0, transition: 'opacity 0.35s ease' }}
     >
-      <div className="w-full max-w-4xl flex flex-col border border-white/8 rounded-2xl overflow-hidden bg-[#0d0d0d]" style={{ height: 'calc(100vh - 64px - 136px - 32px)' }}>
       {/* Topbar */}
       <div className="flex items-center gap-4 px-6 py-4 border-b border-white/8 shrink-0">
         <div className="flex-1 min-w-0">
@@ -100,7 +98,6 @@ export default function CodeView({ project, onClose }) {
           </div>
         )}
       </div>
-      </div>
-    </section>
+    </div>
   )
 }

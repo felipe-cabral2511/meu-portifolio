@@ -25,7 +25,7 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
-      <div className="w-full max-w-3xl px-6 h-16 flex items-center justify-around">
+      <div className="w-full px-6 h-16 flex items-center justify-center gap-40">
         <span className="text-sm font-medium text-white/90 tracking-tight">
           <span className="text-white/30">{`<`}</span>
           Felipe.Cabral.de.Aquino

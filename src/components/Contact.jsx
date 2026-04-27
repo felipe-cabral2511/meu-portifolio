@@ -75,7 +75,7 @@ export default function Contact() {
   const titleRef = useScrollAnimation('fade-up', 0)
 
   return (
-    <section id="contact" className="w-full py-40 flex flex-col items-center">
+    <section id="contact" className="w-full py-40 flex flex-col items-center min-h-screen">
       <div className="w-full max-w-2xl px-6 text-center">
 
         <div ref={titleRef} className="mb-16 text-center">
