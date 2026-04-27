@@ -25,10 +25,10 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
-      <div className="w-full max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="w-full max-w-3xl px-6 h-16 flex items-center justify-around">
         <span className="text-sm font-medium text-white/90 tracking-tight">
           <span className="text-white/30">{`<`}</span>
-          seu.nome
+          Felipe.Cabral.de.Aquino
           <span className="text-white/30">{`/>`}</span>
         </span>
 

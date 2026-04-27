@@ -35,11 +35,11 @@ export default function Hero() {
           <span className="inline-block mb-5 px-4 py-10 text-xs text-white/30 border border-white/10 rounded-full tracking-wide w-30 h-9">
             Disponível para projetos
           </span>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight mb-4">
-            Seu Nome
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] tracking-tight mb-4">
+           Felipe Cabral de Aquino
           </h1>
           <p className="text-lg md:text-xl text-white/40 mx-auto text-center h-10">
-            Desenvolvedor Full Stack
+            Estudante de Engenharia de Software
           </p>
         </div>
 

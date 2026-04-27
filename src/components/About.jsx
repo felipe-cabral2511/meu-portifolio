@@ -15,7 +15,7 @@ export default function About() {
     <section id="about" className="w-full min-h-screen py-40 flex flex-col items-center">
       <div className="w-full max-w-2xl px-6 text-center">
 
-        <div ref={titleRef} className="mb-30 h-20">
+        <div ref={titleRef} className="mb-16">
           <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-3">Sobre mim</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">Quem sou eu</h2>
         </div>
@@ -28,7 +28,7 @@ export default function About() {
         </div>
 
         {/* Texto */}
-        <div ref={textRef} className="space-y-6 text-white/45 text-[15px] leading-loose mb-14 h-35">
+        <div ref={textRef} className="space-y-6 text-white/45 text-[15px] leading-loose mb-14">
           <p>
             Desenvolvedor apaixonado por criar soluções digitais elegantes e eficientes.
             Com foco em experiência do usuário e código limpo, transformo ideias em produtos reais.
@@ -42,12 +42,12 @@ export default function About() {
 
         {/* Skills */}
         <div ref={skillsRef} className="pb-16">
-          <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-5 h-10">Tecnologias</p>
+          <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-5">Tecnologias</p>
           <div className="flex flex-wrap gap-2 justify-center">
             {skills.map(skill => (
               <span
                 key={skill}
-                className="px-3 py-10 text-sm text-white/50 bg-white/4 border border-white/8 rounded-md hover:border-white/20 hover:text-white/70 transition-colors w-19"
+                className="px-4 py-2 text-sm text-white/50 bg-white/4 border border-white/8 rounded-md hover:border-white/20 hover:text-white/70 transition-colors"
               >
                 {skill}
               </span>

@@ -5,7 +5,7 @@ const projects = [
     title: 'Projeto Alpha',
     description: 'Descrição curta do projeto. O que foi feito, qual problema resolve e as tecnologias utilizadas.',
     tags: ['React', 'Node.js', 'PostgreSQL'],
-    href: 'https://example.com', // URL da demo — troque pelo seu site
+    href: 'http://meu-streaming-anime.vercel.app/', // URL da demo 
     codeSnippets: [
       {
         filename: 'server.js',
@@ -50,7 +50,7 @@ export default function App() {
     title: 'Projeto Beta',
     description: 'Descrição curta do projeto. O que foi feito, qual problema resolve e as tecnologias utilizadas.',
     tags: ['Python', 'FastAPI', 'Docker'],
-    href: null, // sem demo pública
+    href: 'https://example.com', // sem demo pública
     codeSnippets: [
       {
         filename: 'main.py',
@@ -79,14 +79,24 @@ async def create_item(item: Item):
     description: 'Descrição curta do projeto. O que foi feito, qual problema resolve e as tecnologias utilizadas.',
     tags: ['TypeScript', 'Next.js', 'Tailwind'],
     href: 'https://example.com',
-    codeSnippets: [],
+    codeSnippets: [
+      {
+        filename: 'server.js',
+        language: 'javascript',
+        code:''}
+      ],
   },
   {
     title: 'Projeto Delta',
     description: 'Descrição curta do projeto. O que foi feito, qual problema resolve e as tecnologias utilizadas.',
     tags: ['React Native', 'Expo'],
     href: 'https://example.com',
-    codeSnippets: [],
+    codeSnippets: [
+      {
+        filename: 'server.js',
+        language: 'javascript',
+        code:''}
+    ],
   },
 ]
 
@@ -153,8 +163,8 @@ export default function Projects({ onOpenCode, onOpenDemo }) {
       <div className="w-full max-w-3xl py-30">
 
         <div ref={titleRef} className="mb-16 text-center">
-          <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-30 h-10 mt-10">Portfólio</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight h-20">Projetos em destaque</h2>
+          <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-4">Portfólio</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">Projetos em destaque</h2>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-3">
