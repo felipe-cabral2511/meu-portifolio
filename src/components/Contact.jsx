@@ -53,7 +53,7 @@ function ContactItem({ contact, index }) {
       href={contact.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 p-4 bg-white/2 border border-white/7 rounded-xl hover:bg-white/4 hover:border-white/15 transition-all duration-200"
+      className="group flex items-center gap-4 p-4 bg-white/2 border border-white/7 rounded-xl hover:bg-blue-950/20 hover:border-blue-500/25 transition-all duration-200"
     >
       <div className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/35 group-hover:text-white/60 transition-colors">
         {contact.icon}
@@ -75,7 +75,7 @@ export default function Contact() {
   const titleRef = useScrollAnimation('fade-up', 0)
 
   return (
-    <section id="contact" className="w-full py-40 flex flex-col items-center min-h-screen">
+    <section id="contact" className="w-full flex flex-col items-center" style={{ paddingTop: '160px', paddingBottom: '160px' }}>
       <div className="w-full max-w-2xl px-6 text-center">
 
         <div ref={titleRef} className="mb-16 text-center">

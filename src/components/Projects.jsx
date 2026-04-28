@@ -110,7 +110,7 @@ function ProjectCard({ project, index, onOpenDemo, onOpenCode, onOpenCodePage })
   return (
     <div
       ref={ref}
-      className="group flex flex-col bg-white/2 border border-white/7 rounded-xl hover:bg-white/4 hover:border-white/15 transition-all duration-300"
+      className="group flex flex-col bg-white/2 border border-white/7 rounded-xl hover:bg-blue-950/20 hover:border-blue-500/25 transition-all duration-300"
     >
       <span className="text-xs text-white/20 font-mono">0{index + 1}</span>
 
@@ -164,7 +164,7 @@ export default function Projects() {
   const [demoProject, setDemoProject] = useState(null)
 
   return (
-    <section id="projects" className="w-full min-h-screen py-40 bg-[#070707] flex flex-col items-center px-6">
+    <section id="projects" className="w-full bg-[#070707] flex flex-col items-center px-6" style={{ paddingTop: '160px', paddingBottom: '220px' }}>
       <div className="w-full max-w-3xl">
 
         <div ref={titleRef} className="mb-16 text-center">
