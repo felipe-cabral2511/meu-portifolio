@@ -22,9 +22,7 @@ export default function About() {
 
         {/* Foto */}
         <div ref={photoRef} className="flex justify-center mb-14">
-          <div className="w-60 h-60 rounded-full bg-white/3 border border-white/7 flex items-center justify-center text-white/20 text-sm">
-            sua foto aqui
-          </div>
+         <img src="/fotoSobre.jpg" alt="Foto sobre mim" className="w-60 h-60 rounded-full object-cover border border-white/7" />
         </div>
 
         {/* Texto */}

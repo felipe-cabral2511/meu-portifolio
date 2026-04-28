@@ -14,12 +14,7 @@ export default function Hero() {
       <NeuralBackground />
 
       <div className="relative z-10 w-full max-w-2xl mx-auto px-6 text-center">
-        <div
-          ref={photoRef}
-          className="mx-auto mb-8 w-34 h-34 rounded-full bg-[#161616] border border-white/10 flex items-center justify-center text-white/20 text-xs"
-        >
-          foto
-        </div>
+        <img src="/fotoPerfil.jpg" alt="Foto de perfil" className="mx-auto mb-8 w-34 h-34 rounded-full object-cover border border-white/10" />
 
         <div ref={textRef}>
           <span className=" text-xs text-white/30 border border-white/10 rounded-full ">

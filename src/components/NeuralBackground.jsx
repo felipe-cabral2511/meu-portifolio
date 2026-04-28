@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const NODE_COUNT = 90
+const NODE_COUNT = 500
 const MAX_DIST = 140
 const MOUSE_RADIUS = 160
 

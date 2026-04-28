@@ -5,48 +5,321 @@ import DemoView from './DemoView'
 
 const projects = [
   {
-    title: 'Projeto Alpha',
-    description: 'Descrição curta do projeto. O que foi feito, qual problema resolve e as tecnologias utilizadas.',
-    tags: ['React', 'Node.js', 'PostgreSQL'],
+    title: 'Serviço de Streaming',
+    description: 'Diretório Privado, projeto feito para faculdade afim de estudar APIs públicas e Banco de Dados',
+    tags: ['React+Vite', 'Node.js', 'Tailwind', 'MongoDB', ''],
     href: 'http://meu-streaming-anime.vercel.app/', // URL da demo 
     codeSnippets: [
       {
         filename: 'server.js',
         language: 'javascript',
-        code: `import express from 'express'
-import { db } from './database.js'
+        code: `import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { Readable } from 'stream';
+import mongoose from 'mongoose';
 
-const app = express()
-app.use(express.json())
+dotenv.config();
 
-app.get('/api/items', async (req, res) => {
-  const items = await db.query('SELECT * FROM items')
-  res.json(items.rows)
-})
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'))`,
+// Conecta ao MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Conectado ao MongoDB'))
+  .catch(err => console.error('Erro ao conectar ao MongoDB:', err));
+
+// Schema do episódio
+const episodioSchema = new mongoose.Schema({
+  animeId: { type: String, required: true },
+  episodeNum: { type: String, required: true },
+  driveId: { type: String, required: true },
+});
+episodioSchema.index({ animeId: 1, episodeNum: 1 }, { unique: true });
+
+const Episodio = mongoose.model('Episodio', episodioSchema);
+
+const app = express();
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://meu-streaming-anime.vercel.app'
+  ]
+}));
+app.use(express.json());
+
+// Salva ou atualiza um episódio
+app.post('/salvar-episodio', async (req, res) => {
+  const { animeId, episodeNum, driveId } = req.body;
+
+  try {
+    await Episodio.findOneAndUpdate(
+      { animeId, episodeNum },
+      { driveId },
+      { upsert: true }
+    );
+    res.json({ message: 'Episódio salvo com sucesso!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao salvar episódio.' });
+  }
+});
+
+// Busca o driveId de um episódio específico
+app.get('/episodio/:animeId/:episodeNum', async (req, res) => {
+  const { animeId, episodeNum } = req.params;
+
+  try {
+    const episodio = await Episodio.findOne({ animeId, episodeNum });
+    res.json({ driveId: episodio?.driveId || null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao buscar episódio.' });
+  }
+});
+
+// Proxy de streaming do Google Drive (sem API)
+app.get('/stream/:driveId', async (req, res) => {
+  const { driveId } = req.params;
+  const url = 'https://drive.usercontent.google.com/download?id=&export=download&authuser=0&confirm=t';
+
+  try {
+    const headers = { 'User-Agent': 'Mozilla/5.0' };
+    if (req.headers.range) headers['Range'] = req.headers.range;
+
+    const response = await fetch(url, { headers });
+
+    res.setHeader('Content-Type', response.headers.get('content-type') || 'video/mp4');
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    const contentLength = response.headers.get('content-length');
+    const contentRange = response.headers.get('content-range');
+    if (contentLength) res.setHeader('Content-Length', contentLength);
+    if (contentRange) res.setHeader('Content-Range', contentRange);
+
+    res.status(response.status);
+    Readable.fromWeb(response.body).pipe(res);
+  } catch (err) {
+    console.error('Erro no stream:', err);
+    res.status(500).send('Erro ao carregar vídeo');
+  }
+});
+
+// Login admin
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || '12345';
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    res.json({ success: true, token: 'admin-autenticado' });
+  } else {
+    res.status(401).json({ success: false, message: 'Usuário ou senha incorretos!' });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log('Servidor rodando na porta');
+});
+`,
       },
       {
-        filename: 'App.jsx',
+        filename: 'Home.jsx',
         language: 'jsx',
-        code: `import { useEffect, useState } from 'react'
+        code: `import React, { useEffect, useState } from 'react';
+import AnimeCarousel from '../components/AnimeCarousel';
 
-export default function App() {
-  const [items, setItems] = useState([])
+const Home = () => {
+  const [topAnimes, setTopAnimes] = useState([]);
+  const [seasonAnimes, setSeasonAnimes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   useEffect(() => {
-    fetch('/api/items')
-      .then(r => r.json())
-      .then(setItems)
-  }, [])
+    const fetchAnimes = async () => {
+      try {
+        const seasonResponse = await fetch('https://api.jikan.moe/v4/seasons/now?limit=15');
+        if (seasonResponse.ok) {
+          const seasonData = await seasonResponse.json();
+          setSeasonAnimes(seasonData.data);
+        }
+
+            await delay(1000);
+            
+            const topResponse = await fetch('https://api.jikan.moe/v4/top/anime?limit=15');
+        if (topResponse.ok) {
+          const topData = await topResponse.json();
+          setTopAnimes(topData.data);
+        }
+
+
+        const topData = await topResponse.json();
+        const seasonData = await seasonResponse.json();
+
+        setTopAnimes(topData.data);
+        setSeasonAnimes(seasonData.data);
+      } catch (error) {
+        console.error("Erro ao buscar os animes:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnimes();
+  }, []);
 
   return (
-    <ul>
-      {items.map(item => <li key={item.id}>{item.name}</li>)}
-    </ul>
-  )
-}`,
+    <div className="pt-24 pb-10 min-h-screen bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+          Explore o <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Catálogo</span>
+        </h1>
+        <p className="text-gray-400 mt-3 text-lg">Os melhores animes da temporada em Full HD.</p>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500 border-opacity-75"></div>
+        </div>
+      ) : (
+        <>
+          <AnimeCarousel title="Lançamentos da Temporada" animes={seasonAnimes} />
+          <AnimeCarousel title="Mais Populares" animes={topAnimes} />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Home;`,
       },
+      {
+        filename: 'Watch.jsx',
+        language: 'jsx',
+        code: `import React, { useState, useEffect } from 'react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import VideoPlayer from '../components/VideoPlayer';
+
+const Watch = () => {
+  const { episodeId } = useParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const animeId = searchParams.get('animeId')
+   const [videoData, setVideoData] = useState({ url: null });
+  const [animeData, setAnimeData] = useState(null);
+
+  useEffect(() => {
+    // 1. Busca informações completas do anime na Jikan
+    fetch(https://api.jikan.moe/v4/anime/{animeId})
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) {
+          setAnimeData(data.data);
+        }
+      })
+      .catch(err => console.error("Erro ao buscar Jikan:", err));
+
+    // 2. Busca o episódio diretamente do servidor (sempre atualizado)
+    fetch({import.meta.env.VITE_API_URL}/episodio/{animeId}/{episodeId})
+      .then(res => res.json())
+      .then(data => {
+        if (data.driveId) {
+          setVideoData({ url: {import.meta.env.VITE_API_URL}/stream/{data.driveId} });
+        } else {
+          setVideoData({ url: null });
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao buscar episódio:", err);
+        setVideoData({ url: null, isDrive: false });
+      });
+  }, [animeId, episodeId]);
+
+  // Transformamos o episodeId da URL (que é string) em número para fazer os cálculos
+  const currentEp = parseInt(episodeId);
+  
+  // Pegamos o total de episódios.
+  // Nesse caso, usamos Infinity para não bloquear o botão de animes que ainda estão a lançar.
+  const totalEpisodes = animeData?.episodes || Infinity; 
+  
+  // Lógica de desativação: É o último episódio se o atual for maior ou igual ao total
+  const isLastEpisode = currentEp >= totalEpisodes;
+
+  return (
+    <div className="min-h-screen bg-gray-950 pt-24 pb-12">
+      <div className="max-w-6xl mx-auto px-4">
+        
+        {/* BOTÃO VOLTAR */}
+        <button 
+          onClick={() => navigate(-1)} 
+          className="mb-6 flex items-center text-orange-500 font-bold bg-orange-500/10 px-4 py-2 rounded-lg hover:bg-orange-500/20 transition-all border border-orange-500/20"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Voltar
+        </button>
+
+        {/* ÁREA DO VÍDEO */}
+        <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+          {videoData.url ? (
+            <VideoPlayer videoSource={videoData.url} />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 bg-gray-900">
+              <svg className="w-16 h-16 mb-4 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+              </svg>
+              <p className="text-lg font-medium text-gray-400">Episódio indisponível no servidor.</p>
+              <p className="text-sm mt-2 text-gray-600">Utilize o Painel Admin para adicionar o link do Google Drive.</p>
+            </div>
+          )}
+        </div>
+
+        {/* INFORMAÇÕES DO ANIME E NAVEGAÇÃO ENTRE EPISÓDIOS */}
+        <div className="mt-8 p-6 bg-gray-900 rounded-2xl border border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6">
+          
+          <div className="text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-black text-white">{animeData?.title || "Carregando..."}</h1>
+            <p className="text-orange-500 font-bold mt-1 text-lg">Episódio {currentEp}</p>
+          </div>
+          
+          <div className="flex gap-4 w-full md:w-auto">
+            <button
+              onClick={() => { window.location.href = /watch/{currentEp - 1}?animeId={animeId}; }}
+              disabled={currentEp <= 1}
+              className="flex-1 md:flex-none bg-gray-800 px-8 py-3 rounded-xl text-white font-bold disabled:opacity-20 transition-all hover:bg-gray-700"
+            >
+              Anterior
+            </button>
+
+            <button
+              onClick={() => { window.location.href = "/watch/{currentEp + 1}?animeId={animeId}"; }}
+              disabled={isLastEpisode}
+              className={flex-1 md:flex-none px-8 py-3 rounded-xl font-black transition-all {
+                isLastEpisode 
+                  ? 'bg-gray-800 text-gray-500 opacity-50 cursor-not-allowed' 
+                  : 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600'
+              }}
+            >
+              Próximo
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Watch;`
+
+      
+      }
+
     ],
   },
   {
