@@ -24,8 +24,8 @@ export default function About() {
             Com foco em experiência do usuário e código limpo, transformo ideias em produtos reais.
           </p>
           <p>
-            Tenho experiência em projetos de ponta a ponta, desde o design de banco de dados
-            até interfaces interativas. Gosto de aprender e me manter atualizado com as
+            Tenho experiência em projetos Web, com foco em
+           interfaces interativas, UX e UI. Gosto de aprender e me manter atualizado com as
             melhores práticas do mercado.
           </p>
         </div>

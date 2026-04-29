@@ -2,8 +2,10 @@ import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
 const skills = [
   { name: 'JavaScript', icon: 'devicon-javascript-plain colored' },
+  { name: 'TypeScript', icon: 'devicon-typescript-plain colored' },
   { name: 'React',      icon: 'devicon-react-original colored'   },
   { name: 'Node.js',    icon: 'devicon-nodejs-plain colored'     },
+  { name: 'Python',    icon: 'devicon-python-plain colored'     },
   { name: 'HTML',       icon: 'devicon-html5-plain colored'      },
   { name: 'CSS',        icon: 'devicon-css3-plain colored'       },
   { name: 'Tailwind',   icon: 'devicon-tailwindcss-plain colored'},
@@ -23,7 +25,9 @@ export default function Skills() {
         {skills.map((skill, i) => (
           <div
             key={skill.name}
-            className="flex flex-col items-center justify-center gap-2 w-24 h-24 rounded-xl dark:border-white/7 border-slate-200 border dark:bg-white/3 bg-white dark:hover:border-blue-500/35 hover:border-blue-400/50 dark:hover:bg-blue-950/15 hover:bg-blue-50 transition-colors duration-300"
+            className="flex flex-col items-center justify-center gap-2 w-24 h-24 rounded-xl
+             dark:border-white/7 border-slate-200 border dark:bg-white/3 bg-white dark:hover:border-blue-500/35
+              hover:border-blue-400/50 dark:hover:bg-blue-950/15 hover:bg-blue-50 transition-colors duration-300"
             style={{
               animation: `skillFloat 3s ease-in-out infinite`,
               animationDelay: `${i * 0.4}s`,

@@ -529,10 +529,11 @@ export default function Projects() {
         </div>
 
         {/* Setas */}
-        <div className="flex items-center justify-center gap-4 mt-8">
+        <div className="flex items-center justify-center gap-4 h-20">
           <button
             onClick={() => { moveTo(indexRef.current - 1); setCodeProject(null); setDemoProject(null) }}
-            className="w-10 h-10 flex items-center justify-center rounded-full dark:border-white/10 border-slate-200 border dark:bg-white/3 bg-white dark:text-white/40 text-slate-400 hover:border-blue-500/40 dark:hover:text-white/80 hover:text-slate-700 dark:hover:bg-blue-950/20 hover:bg-blue-50 transition-all duration-300"
+            className="w-10 h-10 flex items-center justify-center rounded-full
+             dark:border-white/10 border-slate-200 border dark:bg-white/3 bg-white dark:text-white/40 text-slate-400 hover:border-blue-500/40 dark:hover:text-white/80 hover:text-slate-700 dark:hover:bg-blue-950/20 hover:bg-blue-50 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
