@@ -53,18 +53,18 @@ function ContactItem({ contact, index }) {
       href={contact.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 p-4 bg-white/2 border border-white/7 rounded-xl hover:bg-blue-950/20 hover:border-blue-500/25 transition-all duration-200"
+      className="group flex items-center gap-4 p-4 dark:bg-white/2 bg-white dark:border-white/7 border-slate-200 border rounded-xl dark:hover:bg-blue-950/20 hover:bg-blue-50 dark:hover:border-blue-500/25 hover:border-blue-300 transition-all duration-200"
     >
-      <div className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/35 group-hover:text-white/60 transition-colors">
+      <div className="shrink-0 w-9 h-9 rounded-lg dark:bg-white/5 bg-slate-100 dark:border-white/8 border-slate-200 border flex items-center justify-center dark:text-white/35 text-slate-500 group-hover:text-blue-500 transition-colors">
         {contact.icon}
       </div>
       <div className="min-w-0">
-        <p className="text-xs text-white/25 mb-0.5">{contact.label}</p>
-        <p className="text-sm text-white/55 group-hover:text-white/80 transition-colors truncate">
+        <p className="text-xs dark:text-white/25 text-slate-400 mb-0.5">{contact.label}</p>
+        <p className="text-sm dark:text-white/55 text-slate-600 dark:group-hover:text-white/80 group-hover:text-slate-900 transition-colors truncate">
           {contact.value}
         </p>
       </div>
-      <svg className="w-4 h-4 text-white/15 group-hover:text-white/35 ml-auto shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg className="w-4 h-4 dark:text-white/15 text-slate-300 dark:group-hover:text-white/35 group-hover:text-slate-400 ml-auto shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
       </svg>
     </a>
@@ -79,9 +79,9 @@ export default function Contact() {
       <div className="w-full max-w-2xl px-6 text-center">
 
         <div ref={titleRef} className="mb-16 text-center">
-          <p className="text-xs text-white/25 uppercase tracking-[0.2em] mb-3">Contato</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">Vamos conversar</h2>
-          <p className="text-white/35 mt-5 text-sm leading-loose justify-center">
+          <p className="text-xs dark:text-white/25 text-slate-400 uppercase tracking-[0.2em] mb-3">Contato</p>
+          <h2 className="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 leading-tight">Vamos conversar</h2>
+          <p className="dark:text-white/35 text-slate-500 mt-5 text-sm leading-loose justify-center">
             Estou aberto a novas oportunidades e projetos. Entre em contato pelo canal que preferir.
           </p>
         </div>

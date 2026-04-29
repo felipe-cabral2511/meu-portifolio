@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
-const NODE_COUNT = 500
+const NODE_COUNT = 250
 const MAX_DIST = 140
 const MOUSE_RADIUS = 160
 
 export default function NeuralBackground() {
   const canvasRef = useRef(null)
+  const { isDark } = useTheme()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -37,12 +39,21 @@ export default function NeuralBackground() {
     }
     canvas.addEventListener('mousemove', onMouseMove)
 
+    // dark: azul médio-escuro; light: azul escuro bem visível no fundo claro
+    const edgeColor    = isDark ? '37,99,235'   : '29,78,216'
+    const nodeColor    = isDark ? '59,130,246'  : '37,99,235'
+    const nodeNear     = isDark ? '96,165,250'  : '59,130,246'
+    const nodeOpacity  = isDark ? 0.6           : 0.65
+    const nodeNearOp   = isDark ? 0.9           : 0.9
+    const canvasOpacity = isDark ? 0.6          : 0.7
+
+    canvas.style.opacity = canvasOpacity
+
     let rafId
 
     const animate = () => {
       ctx.clearRect(0, 0, W, H)
 
-      // Mouse direction influence
       const mlen = Math.sqrt(mdx * mdx + mdy * mdy)
       if (mlen > 0.5) {
         const dnx = mdx / mlen
@@ -61,7 +72,6 @@ export default function NeuralBackground() {
       mdx *= 0.85
       mdy *= 0.85
 
-      // Update positions
       nodes.forEach(n => {
         const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy)
         if (spd > 1.8) { n.vx = (n.vx / spd) * 1.8; n.vy = (n.vy / spd) * 1.8 }
@@ -79,7 +89,6 @@ export default function NeuralBackground() {
         if (n.y > H) { n.y = H;  n.vy = -Math.abs(n.vy) }
       })
 
-      // Draw edges
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x
@@ -87,7 +96,7 @@ export default function NeuralBackground() {
           const d = Math.sqrt(dx * dx + dy * dy)
           if (d < MAX_DIST) {
             const alpha = (1 - d / MAX_DIST) * 0.35
-            ctx.strokeStyle = `rgba(59,130,246,${alpha})`
+            ctx.strokeStyle = `rgba(${edgeColor},${alpha})`
             ctx.lineWidth = 0.7
             ctx.beginPath()
             ctx.moveTo(nodes[i].x, nodes[i].y)
@@ -97,13 +106,14 @@ export default function NeuralBackground() {
         }
       }
 
-      // Draw nodes
       nodes.forEach(n => {
         const d = Math.sqrt((n.x - mouseX) ** 2 + (n.y - mouseY) ** 2)
         const near = d < MOUSE_RADIUS
         ctx.beginPath()
         ctx.arc(n.x, n.y, near ? 3 : 2, 0, Math.PI * 2)
-        ctx.fillStyle = near ? 'rgba(147,197,253,0.9)' : 'rgba(96,165,250,0.55)'
+        ctx.fillStyle = near
+          ? `rgba(${nodeNear},${nodeNearOp})`
+          : `rgba(${nodeColor},${nodeOpacity})`
         ctx.fill()
       })
 
@@ -124,7 +134,7 @@ export default function NeuralBackground() {
       canvas.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('resize', onResize)
     }
-  }, [])
+  }, [isDark])
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.55 }} />
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 }
