@@ -1,12 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
-import CodeView from './CodeView'
-import DemoView from './DemoView'
+import ProjectModal from './ProjectModal'
 
 // ─── Carousel card ────────────────────────────────────────────────────────────
-function ProjectCard({ project, active, onOpenDemo, onOpenCode }) {
-  const hasSnippets = project.codeSnippets?.some(s => s.code)
-
+function ProjectCard({ project, active }) {
   return (
     <div
       className="flex flex-col dark:bg-white/3 bg-white dark:border-white/8 border-slate-200 border rounded-2xl overflow-hidden transition-all duration-500 shrink-0 w-full"
@@ -23,7 +20,7 @@ function ProjectCard({ project, active, onOpenDemo, onOpenCode }) {
       {/* Conteúdo */}
       <div className="p-5 flex flex-col gap-3">
         <h3 className="text-base font-semibold dark:text-white text-slate-900">{project.title}</h3>
-        <p className="text-sm dark:text-white/40 text-slate-500 leading-relaxed">{project.description}</p>
+        <p className="text-sm dark:text-white/40 text-slate-500 leading-relaxed line-clamp-2">{project.description}</p>
 
         <div className="flex flex-wrap gap-1.5">
           {project.tags.filter(Boolean).map(tag => (
@@ -33,29 +30,11 @@ function ProjectCard({ project, active, onOpenDemo, onOpenCode }) {
           ))}
         </div>
 
-        <div className="flex gap-4 text-sm dark:border-white/5 border-slate-100 border-t pt-3 mt-1">
-          {project.href && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onOpenDemo() }}
-              className="flex items-center gap-1.5 dark:text-white/35 text-slate-400 dark:hover:text-white/70 hover:text-slate-700 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Demo
-            </button>
-          )}
-          {hasSnippets && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onOpenCode() }}
-              className="flex items-center gap-1.5 dark:text-white/35 text-slate-400 dark:hover:text-white/70 hover:text-slate-700 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
-              </svg>
-              Código
-            </button>
-          )}
+        <div className="flex items-center gap-1.5 dark:border-white/5 border-slate-100 border-t pt-3 mt-1">
+          <span className="text-xs dark:text-white/25 text-slate-400">Clique para abrir</span>
+          <svg className="w-3 h-3 dark:text-white/20 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </div>
       </div>
     </div>
@@ -235,7 +214,7 @@ const Home = () => {
     <div className="pt-24 pb-10 min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12">
         <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-          Explore o <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Catálogo</span>
+          Explore o <span className="text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-orange-600">Catálogo</span>
         </h1>
         <p className="text-gray-400 mt-3 text-lg">Os melhores animes da temporada em Full HD.</p>
       </div>
@@ -446,12 +425,10 @@ export default function Projects() {
   const trackRef = useRef(null)
   const indexRef = useRef(N) // começa na cópia do meio
   const [index, setIndex] = useState(N)
-  const [codeProject, setCodeProject] = useState(null)
-  const [demoProject, setDemoProject] = useState(null)
+  const [modalProject, setModalProject] = useState(null)
 
   const current = index % N
 
-  // Move para um índice COM animação
   const moveTo = (i) => {
     if (!trackRef.current) return
     trackRef.current.style.transition = 'transform 500ms ease-in-out'
@@ -459,7 +436,6 @@ export default function Projects() {
     setIndex(i)
   }
 
-  // Salta silenciosamente para um índice SEM animação
   const jumpTo = (i) => {
     if (!trackRef.current) return
     trackRef.current.style.transition = 'none'
@@ -467,21 +443,16 @@ export default function Projects() {
     setIndex(i)
   }
 
-  // Após cada transição, normaliza para a cópia do meio se necessário
   const handleTransitionEnd = () => {
     const i = indexRef.current
     if (i >= 2 * N) jumpTo(i - N)
     else if (i < N) jumpTo(i + N)
   }
 
-
   const goTo = (realIndex) => {
-    // Calcula o índice mais próximo da posição atual dentro do looped
     const cur = indexRef.current
     const base = Math.floor(cur / N) * N
     moveTo(base + realIndex)
-    setCodeProject(null)
-    setDemoProject(null)
   }
 
   const offset = -(index * (CARD_WIDTH + CARD_GAP))
@@ -515,32 +486,29 @@ export default function Projects() {
                 key={i}
                 className="shrink-0 cursor-pointer"
                 style={{ width: `${CARD_WIDTH}px` }}
-                onClick={() => goTo(i % N)}
+                onClick={() => {
+                  goTo(i % N)
+                  setModalProject(project)
+                }}
               >
-                <ProjectCard
-                  project={project}
-                  active={i % N === current}
-                  onOpenDemo={() => { setDemoProject(project); setCodeProject(null) }}
-                  onOpenCode={() => { setCodeProject(project); setDemoProject(null) }}
-                />
+                <ProjectCard project={project} active={i % N === current} />
               </div>
             ))}
           </div>
         </div>
 
         {/* Setas */}
-        <div className="flex items-center justify-center gap-4 h-20">
+        <div className="flex items-center justify-center gap-4 mt-8">
           <button
-            onClick={() => { moveTo(indexRef.current - 1); setCodeProject(null); setDemoProject(null) }}
-            className="w-10 h-10 flex items-center justify-center rounded-full
-             dark:border-white/10 border-slate-200 border dark:bg-white/3 bg-white dark:text-white/40 text-slate-400 hover:border-blue-500/40 dark:hover:text-white/80 hover:text-slate-700 dark:hover:bg-blue-950/20 hover:bg-blue-50 transition-all duration-300"
+            onClick={() => moveTo(indexRef.current - 1)}
+            className="w-10 h-10 flex items-center justify-center rounded-full dark:border-white/10 border-slate-200 border dark:bg-white/3 bg-white dark:text-white/40 text-slate-400 hover:border-blue-500/40 dark:hover:text-white/80 hover:text-slate-700 dark:hover:bg-blue-950/20 hover:bg-blue-50 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
-            onClick={() => { moveTo(indexRef.current + 1); setCodeProject(null); setDemoProject(null) }}
+            onClick={() => moveTo(indexRef.current + 1)}
             className="w-10 h-10 flex items-center justify-center rounded-full dark:border-white/10 border-slate-200 border dark:bg-white/3 bg-white dark:text-white/40 text-slate-400 hover:border-blue-500/40 dark:hover:text-white/80 hover:text-slate-700 dark:hover:bg-blue-950/20 hover:bg-blue-50 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -549,19 +517,11 @@ export default function Projects() {
           </button>
         </div>
 
-        {/* Viewers */}
-        {codeProject && (
-          <div className="mt-8">
-            <CodeView project={codeProject} onClose={() => setCodeProject(null)} />
-          </div>
-        )}
-        {demoProject && (
-          <div className="mt-8">
-            <DemoView project={demoProject} onClose={() => setDemoProject(null)} />
-          </div>
-        )}
-
       </div>
+
+      {modalProject && (
+        <ProjectModal project={modalProject} onClose={() => setModalProject(null)} />
+      )}
     </section>
   )
 }
